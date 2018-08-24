@@ -42,24 +42,17 @@ define([
             codeChunk_string = codeChunk_string + codeChunk[j];
           }
 
-          var xorBuddy = "";
-          for(j=0; j<codeChunk_string.length; j++) {
-            xorBuddy = xorBuddy + "1";
-          }
-          var xorBuddy_bin = parseInt(xorBuddy, 2);
           var codeChunk_bin = parseInt(codeChunk_string, 2);
           var negative = false;
           if(codeChunk_bin & 0x1) {
             negative = true;
-            codeChunk_bin = codeChunk_bin ^ xorBuddy_bin;
-          }
-
-          codeChunk_bin = codeChunk_bin >> 1;
-
-          if(negative) {
-            codeChunk_bin = codeChunk_bin - 1;
-            codeChunk_bin = codeChunk_bin ^ xorBuddy_bin;
+            codeChunk_bin = ~(codeChunk_bin >> 1);
+            codeChunk_bin = codeChunk_bin - 0x1;
+            codeChunk_bin = ~(codeChunk_bin >> 1);
             codeChunk_bin = codeChunk_bin * -1;
+            codeChunk_bin = codeChunk_bin << 1;
+          }else {
+            codeChunk_bin = codeChunk_bin >> 1;
           }
 
           codeChunk_bin = codeChunk_bin / 100000;
@@ -67,7 +60,7 @@ define([
 
           if(y%2 == 1) {
             codeChunks[Math.floor(y/2)] = coord.reverse();
-            if(y > 1) {
+            if(y>1) {
               codeChunks[Math.floor(y/2)][0] = codeChunks[Math.floor(y/2)][0] + codeChunks[Math.floor(y/2) - 1][0];
               codeChunks[Math.floor(y/2)][1] = codeChunks[Math.floor(y/2)][1] + codeChunks[Math.floor(y/2) - 1][1];
             }
